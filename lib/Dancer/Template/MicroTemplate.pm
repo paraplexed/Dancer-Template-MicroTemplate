@@ -22,12 +22,12 @@ sub init {
         line_start => '%',
         tag_start  => $self->config->{start_tag} || '<%',
         tag_end    => $self->config->{stop_tag} || '%>',
-
     };
 
-    my $path = path($self->{settings}{appdir}, 'views');
-    $mt_cfg->{include_path} = [$path]
-      if $self->{settings} && $self->{settings}{appdir};
+    if ($self->{settings} && $self->{settings}{appdir}) {
+        my $path = path($self->{settings}{appdir}, 'views');
+        $mt_cfg->{include_path} = [$path];
+    }
 
     $_engine = Text::MicroTemplate::File->new(%$mt_cfg);
 }
@@ -51,6 +51,21 @@ __END__
 =head1 NAME
 
 Dancer::Template::MicroTemplate - MicroTemplate wrapper for Dancer
+
+=head1 SYNOPSIS
+
+    use Dancer;
+    use Dancer::FileUtils 'path';
+    use Dancer::Template::MicroTemplate;
+
+    my $engine = Dancer::Template::MicroTemplate->new;
+    my $template = path('foo', 'bar.mt');
+    my $rendered = $engine->render($template, {template_var1 => 1, template_var2 => 2});
+
+    get '/' => sub {
+        $rendered
+    };
+    dance;
 
 =head1 DESCRIPTION
 
